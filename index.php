@@ -72,7 +72,7 @@ if($episodes->length > 0) {
 			<pubDate>". date(DATE_RSS,$pubDate) ."</pubDate>
 			<title>$e_title</title>
 			<link>$e_url</link>
-			<description> </description>
+			<description>$e_title</description>
 			<itunes:image href=\"$large_photo\" />
 			<enclosure url=\"$e_original\" length=\"$item_size\" type=\"audio/mp4\" />
 			<guid isPermaLink=\"true\">$e_url</guid>
