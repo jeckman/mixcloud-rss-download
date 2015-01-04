@@ -50,6 +50,8 @@ $episodes = $xpath->query('//div[@class="card-elements-container cf"]');
 if($episodes->length > 0) {
 	//echo '<p>List of episodes:</p><ol>';
 	foreach ($episodes as $container) {
+		$episode_image = $xpath->query('.//div[@class="card-cloudcast-image"]/a/img',$container);
+		$large_photo = 'http:' . $episode_image->item(0)->getAttribute("src");
 		$episode_info = $xpath->query('.//div[@class="card-cloudcast-image"]/span',$container);
 		$e_title = $episode_info->item(0)->getAttribute("m-title");
 		$e_url = 'http://www.mixcloud.com'. $episode_info->item(0)->getAttribute("m-url");
@@ -60,7 +62,6 @@ if($episodes->length > 0) {
 		$e_identifier = rtrim($e_identifier,".mp3"); 
 		$e_download =  $e_server . '/c/m4a/64/'. $e_identifier .'.m4a'; 
 		$e_original = $e_server . '/c/originals/' . $e_identifier . '.mp3';
-		$large_photo = 'http:'. $episode_info->item(0)->getAttribute("m-thumbnail-url"); 
 		$item_size = get_Size($e_original);
 		$episode_update = $xpath->query('.//div[@class="card-stats cf"]/span[@class="card-date"]/time',$container); 
 		if($episode_update)
