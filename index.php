@@ -7,8 +7,9 @@ date_default_timezone_set('America/New_York');
 $my_podcast = 'TWR';
 $my_feed_url = "http://johneckman.com/mc/feed.xml"; 
 $language = "en-us";
-$user_info = json_decode(curlGet('http://api.mixcloud.com/'.$my_podcast .'/')); 
 /* nothing to configure below this line */ 
+
+$user_info = json_decode(curlGet('http://api.mixcloud.com/'.$my_podcast .'/')); 
 
 $itunes_image = $user_info->pictures->large;
 $my_description = '<![CDATA['.$user_info->biog.']]>';
