@@ -5,8 +5,8 @@
 ************************************/
 
 date_default_timezone_set('America/New_York');
-$my_podcast = 'TWR';
-$my_feed_url = "http://johneckman.com/mc/feed.xml"; 
+$my_podcast = '';  /* www.mixcloud.com/THISBIT/ */ 
+$my_feed_url = ""; /* url where your cron job saves the output feed - used for self-reference */ 
 $language = "en-us";
 
 
