@@ -83,12 +83,14 @@ while($page <= $nb_pages) {
 			$e_download =  $e_server . '/c/m4a/64/'. $e_identifier .'.m4a'; 
 			$e_original = $e_server . '/c/originals/' . $e_identifier . '.mp3';
 			$item_size = get_Size($e_original);
-			$episode_update = $xpath->query('.//div[@class="card-stats cf"]/span[@class="card-date"]/time',$container); 
-			if($episode_update)
-				$pubDate = strtotime($episode_update->item(0)->getAttribute("datetime"));
-			else
-				$pubDate = "false";
-			$output .= "<item>
+			/* if $item_size is 168 this means not found */ 
+			if($item_size < 200) {
+				$episode_update = $xpath->query('.//div[@class="card-stats cf"]/span[@class="card-date"]/time',$container); 
+				if($episode_update)
+					$pubDate = strtotime($episode_update->item(0)->getAttribute("datetime"));
+				else
+					$pubDate = "false";
+				$output .= "<item>
 				<pubDate>". date(DATE_RSS,$pubDate) ."</pubDate>
 				<title><![CDATA[$e_title]]></title>
 				<link>$e_url</link>
@@ -97,8 +99,8 @@ while($page <= $nb_pages) {
 				<enclosure url=\"$e_original\" length=\"$item_size\" type=\"audio/mp4\" />
 				<guid isPermaLink=\"true\">$e_url</guid>
 			</item>
-			";
-			
+				";
+			}
 		}
 	}
 	++$page;
