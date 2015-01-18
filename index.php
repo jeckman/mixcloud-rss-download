@@ -1,18 +1,25 @@
 <?php
 
-include_once('curl.php');
+/***********************************
+	   config stuff up here 
+************************************/
 
-/* config stuff up here */
 date_default_timezone_set('America/New_York');
 $my_podcast = 'TWR';
 $my_feed_url = "http://johneckman.com/mc/feed.xml"; 
 $language = "en-us";
-/* nothing to configure below this line */ 
+
+
+/***************************************
+  nothing to configure below this line
+****************************************/ 
+
+include_once('curl.php');
 
 $user_info = json_decode(curlGet('http://api.mixcloud.com/'.$my_podcast .'/')); 
 
 $itunes_image = $user_info->pictures->large;
-$my_description = '<![CDATA['.$user_info->biog.']]>';
+$my_description = stripslashes($user_info->biog);
 $updated = date(DATE_RSS,strtotime($user_info->updated_time));
 $my_title = $user_info->name;
 $my_link = $user_info->url; 
@@ -26,14 +33,14 @@ $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 	<rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\"
 		 xmlns:atom=\"http://www.w3.org/2005/Atom\">	
 	<channel>
-		<title>$my_title</title>
+		<title><![CDATA[$my_title]]></title>
 		<link>$my_link</link>
-		<description>$my_description</description>
+		<description><![CDATA[$my_description]]></description>
 		<image>
 			<url>$itunes_image</url>
 			<link>$my_link</link>
-			<description>$my_title</description>
-			<title>$my_title</title>
+			<description><![CDATA[$my_title]]></description>
+			<title><![CDATA[$my_title]]></title>
 		</image>
 		<language>$language</language>
 		<lastBuildDate>$updated</lastBuildDate>
@@ -45,12 +52,15 @@ $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 
 while($page <= $nb_pages) {
 	/* First get the info page for this playlist */
-	$my_podcast_page = curlGet('http://www.mixcloud.com/'.$my_podcast.'/?page='.$page.'&_ajax=1');
-	
+	$my_podcast_page = curlGet('http://www.mixcloud.com/'.$my_podcast.'/?page='.$page);
+
+	$my_podcast_page = mb_convert_encoding($my_podcast_page, 'HTML-ENTITIES', "UTF-8");
+
 	$doc = new DOMDocument();
 	/* hide warnings - html docs likely won't parse correctly */ 
 	libxml_use_internal_errors(true);
 	$doc->loadHTML($my_podcast_page); 
+
 	
 	$xpath = new DOMXpath($doc);
 	
@@ -64,6 +74,7 @@ while($page <= $nb_pages) {
 			$episode_info = $xpath->query('.//div[@class="card-cloudcast-image"]/span',$container);
 			$e_title = $episode_info->item(0)->getAttribute("m-title");
 			$e_url = 'http://www.mixcloud.com'. $episode_info->item(0)->getAttribute("m-url");
+			$e_description = json_decode(curlGet('http://api.mixcloud.com'.$episode_info->item(0)->getAttribute("m-url")))->description;
 			$e_preview = $episode_info->item(0)->getAttribute("m-preview"); 
 			$e_server = substr($e_preview,0,29); 
 			// todo - should not just be 39 magic number, but where 'preview/' is in url
@@ -79,9 +90,9 @@ while($page <= $nb_pages) {
 				$pubDate = "false";
 			$output .= "<item>
 				<pubDate>". date(DATE_RSS,$pubDate) ."</pubDate>
-				<title>$e_title</title>
+				<title><![CDATA[$e_title]]></title>
 				<link>$e_url</link>
-				<description>$e_title</description>
+				<description><![CDATA[$e_description]]></description>
 				<itunes:image href=\"$large_photo\" />
 				<enclosure url=\"$e_original\" length=\"$item_size\" type=\"audio/mp4\" />
 				<guid isPermaLink=\"true\">$e_url</guid>
@@ -101,7 +112,14 @@ $output .= "
 	</channel>
 </rss>
 ";
-header("Content-Type: application/rss+xml");
+
+header("Content-Type: application/rss+xml; charset=UTF-8");
 echo $output;
+
+/*
+Create a xml file containing the podcast feed
+file_put_contents($my_podcast.".xml", $output);
+header("Location: $my_podcast.".xml");
+*/
 
 ?>
