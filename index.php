@@ -22,10 +22,7 @@ $itunes_image = $user_info->pictures->large;
 $my_description = stripslashes($user_info->biog);
 $updated = date(DATE_RSS,strtotime($user_info->updated_time));
 $my_title = $user_info->name;
-$my_link = $user_info->url; 
-$nb_podcasts = $user_info->cloudcast_count; 
-$nb_pages = ceil($nb_podcasts/24); // 24 cloudcasts per page
-$page = 1; 
+$my_link = $user_info->url;
  
 /* write out the outer shell, channel, globals */ 
 $updated= date("D, d M Y H:i:s T",strtotime("now"));
