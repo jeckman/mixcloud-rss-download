@@ -95,7 +95,7 @@ do {
 			if($item_size > 200) {
 				$episode_update = $xpath->query('.//div[@class="card-stats cf"]/span[@class="card-date"]/time',$container); 
 				if($episode_update) {
-					$pubDate = strtotime($episode_update->item(0)->getAttribute("datetime"));
+					$pubDate = strtotime($episode_update->item(0)->nodeValue);
 				} else {
 					$pubDate = "false";
 				} 
