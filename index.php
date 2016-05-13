@@ -73,7 +73,7 @@ do {
 		//echo '<p>List of episodes:</p><ol>';
 		foreach ($episodes as $container) {
 			$episode_image = $xpath->query('.//div[@class="card-cloudcast-image"]/a/img',$container);
-			$large_photo = 'http:' . $episode_image->item(0)->getAttribute("src");
+			$large_photo = $episode_image->item(0)->getAttribute("src");
 			$episode_info = $xpath->query('.//div[@class="card-cloudcast-image"]/span',$container);
 			if ($episode_info->length == 0) { //episodes that are disabled have no title
 				continue;
