@@ -6,6 +6,7 @@
 
 date_default_timezone_set('America/New_York');
 $my_podcast = '';  /* www.mixcloud.com/THISBIT/ */ 
+
 $my_feed_url = ""; /* url where your cron job saves the output feed - used for self-reference */ 
 $language = "en-us";
 
@@ -67,21 +68,21 @@ do {
 	}
 	$nextURL = $xpath->query('//div[@class="infinitescroll-end"]')->item(0)->getAttribute("m-next-page-url");
 	
-	$episodes = $xpath->query('//div[@class="card-elements-container cf"]'); 
-	//echo '<p>episodes has '. $episodes->length .'</p>';
+        $episodes = $xpath->query('//span[@class="play-button "]');
+        //echo '<p>episodes has '. $episodes->length .'</p>';
 	if($episodes->length > 0) {
 		//echo '<p>List of episodes:</p><ol>';
-		foreach ($episodes as $container) {
-			$episode_image = $xpath->query('.//div[@class="card-cloudcast-image"]/a/img',$container);
-			$large_photo = 'http:' . $episode_image->item(0)->getAttribute("src");
-			$episode_info = $xpath->query('.//div[@class="card-cloudcast-image"]/span',$container);
-			if ($episode_info->length == 0) { //episodes that are disabled have no title
-				continue;
-			}
-			$e_title = $episode_info->item(0)->getAttribute("m-title");
-			$e_url = 'http://www.mixcloud.com'. $episode_info->item(0)->getAttribute("m-url");
-			$e_description = json_decode(curlGet('http://api.mixcloud.com'.$episode_info->item(0)->getAttribute("m-url")))->description;
-			$e_preview = $episode_info->item(0)->getAttribute("m-preview");
+		foreach ($episodes as $episode) {
+			//$episode_image = $xpath->query('.//div[@class="card-cloudcast-image"]/a/img',$container);
+			//$large_photo = 'http:' . $episode_image->item(0)->getAttribute("src");
+			$episode_info = $xpath->query('//span[@class="play-button "]');
+		        //if ($episode_info->length == 0) { //episodes that are disabled have no title
+			//	continue;
+			//}
+			$e_title = $episode->getAttribute("m-title");
+			$e_url = 'http://www.mixcloud.com'. $episode->getAttribute("m-url");
+			$e_description = json_decode(curlGet('http://api.mixcloud.com'.$episode->getAttribute("m-url")))->description;
+			$e_preview = $episode->getAttribute("m-preview");
 			$length = strpos($e_preview, "preview");
 			$e_server = substr($e_preview,0,$length - 1);
 			$e_server = str_replace("audiocdn", "stream", $e_server);
