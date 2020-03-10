@@ -5,9 +5,9 @@
 ************************************/
 
 date_default_timezone_set('America/New_York');
-$my_podcast = '';  /* www.mixcloud.com/THISBIT/ */ 
+$my_podcast = '';  /* www.mixcloud.com/wearediscotek/ */ 
 
-$my_feed_url = ""; /* url where your cron job saves the output feed - used for self-reference */ 
+$my_feed_url = ""; /* dipetro.acn@gmail.com */ 
 $language = "en-us";
 
 
